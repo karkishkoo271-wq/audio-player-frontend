@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["webpack-env"],
+    "noImplicitAny": true,
+    "noUnusedLocals": false,  // ← добавлено
+    "noUnusedParameters": false  // ← добавлено
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

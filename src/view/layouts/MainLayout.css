@@ -1,0 +1,38 @@
+.main-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-layout__wrapper {
+  display: flex;
+  height: 100%;
+  margin-left: var(--sidebar-width);
+}
+
+.main-layout__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+}
+
+.main-layout__content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--player-height);
+  background: var(--color-bg-main);
+}
+
+.main-layout__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-layout__content::-webkit-scrollbar-track {
+  background: var(--color-bg-sidebar);
+}
+
+.main-layout__content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
