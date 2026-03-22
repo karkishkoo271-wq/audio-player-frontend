@@ -1,4 +1,3 @@
-// src/view/components/TrackCard/TrackCard.ts
 import { el } from 'redom';
 import { Track } from '../../../types/app.types';
 import './TrackCard.css';
@@ -21,7 +20,7 @@ export class TrackCard {
     this.track = track;
     this.isFavorite = isFavorite;
     this.onToggleFavorite = onToggleFavorite;
-    
+
     this.el = el('div.track-card',
       // Номер трека
       el('div.track-card__number', number.toString()),
@@ -49,11 +48,12 @@ export class TrackCard {
       // Дата добавления
       el('div.track-card__date', this.formatDate(track.uploadedAt)),
       
-      // Кнопка избранного
+      // ✅ Кнопка избранного — ИСПРАВЛЕНО
       el('button.track-card__favorite' + (isFavorite ? ' track-card__favorite--active' : ''), 
         { 
           'data-track-id': track.id,
-          'title': isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'
+          'title': isFavorite ? 'Убрать из избранного' : 'Добавить в избранное',
+          'type': 'button'
         },
         isFavorite ? '❤️' : '♡'
       ),
@@ -62,9 +62,9 @@ export class TrackCard {
       el('div.track-card__duration', this.formatDuration(track.duration)),
       
       // Меню
-      el('button.track-card__menu', { 'title': 'Ещё' }, '⋯')
+      el('button.track-card__menu', { 'title': 'Ещё', 'type': 'button' }, '⋯')
     );
-    
+
     // Клик по карточке = воспроизведение (кроме кнопок)
     this.el.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLElement;
@@ -74,17 +74,18 @@ export class TrackCard {
         onPlay(track);
       }
     });
-    
-    // Обработчик кнопки избранного
-    const favBtn = this.el.querySelector('.track-card__favorite');
+
+    // ✅ Обработчик кнопки избранного — ИСПРАВЛЕНО
+    const favBtn = this.el.querySelector('.track-card__favorite') as HTMLButtonElement;
     if (favBtn && onToggleFavorite) {
       favBtn.addEventListener('click', (e: Event) => {
         e.stopPropagation();
+        e.preventDefault();
         this.toggleFavorite();
       });
     }
   }
-  
+
   /**
    * Переключение статуса избранного
    */
@@ -94,23 +95,23 @@ export class TrackCard {
     // Сразу меняем визуальное состояние для отзывчивости
     this.isFavorite = !this.isFavorite;
     this.updateVisualFavorite();
-    
+
     // Вызываем колбэк для обновления состояния в родителе
     this.onToggleFavorite(this.track.id);
   }
-  
+
   /**
    * Обновление визуального состояния кнопки избранного
    */
   private updateVisualFavorite(): void {
-    const btn = this.el.querySelector('.track-card__favorite');
+    const btn = this.el.querySelector('.track-card__favorite') as HTMLButtonElement;
     if (btn) {
       btn.classList.toggle('track-card__favorite--active', this.isFavorite);
       btn.textContent = this.isFavorite ? '❤️' : '♡';
       btn.setAttribute('title', this.isFavorite ? 'Убрать из избранного' : 'Добавить в избранное');
     }
   }
-  
+
   /**
    * Публичный метод для обновления статуса (извне)
    */
@@ -118,13 +119,9 @@ export class TrackCard {
     this.isFavorite = isFavorite;
     this.updateVisualFavorite();
   }
-  
-  /**
-   * Форматирование даты загрузки трека
-   */
+
   private formatDate(dateString?: string): string {
     if (!dateString) return '7 дней назад';
-    
     try {
       const date = new Date(dateString);
       const now = new Date();
@@ -146,50 +143,36 @@ export class TrackCard {
       return '—';
     }
   }
-  
-  /**
-   * Форматирование длительности трека
-   */
+
   private formatDuration(seconds?: number): string {
     if (!seconds || isNaN(seconds)) return '0:00';
-    
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
-  
-  /**
-   * Склонение русских слов (день/дня/дней)
-   */
+
   private declension(number: number, titles: string[]): string {
     const cases = [2, 0, 1, 1, 1, 2];
     return titles[
-      (number % 100 > 4 && number % 100 < 20) 
-        ? 2 
+      (number % 100 > 4 && number % 100 < 20)
+        ? 2
         : cases[(number % 10 < 5) ? number % 10 : 5]
     ];
   }
-  
-  /**
-   * Обновление данных трека (если нужно)
-   */
+
   updateTrack(track: Track): void {
     this.track = track;
-    
     const titleEl = this.el.querySelector('.track-card__title');
     const artistEl = this.el.querySelector('.track-card__artist');
     const albumEl = this.el.querySelector('.track-card__album');
     const durationEl = this.el.querySelector('.track-card__duration');
-    
+
     if (titleEl) titleEl.textContent = track.title;
     if (artistEl) artistEl.textContent = track.artist;
     if (albumEl) albumEl.textContent = track.album || '—';
     if (durationEl) durationEl.textContent = this.formatDuration(track.duration);
   }
-  
-  /**
-   * Выделение карточки как текущей (воспроизводится)
-   */
+
   setActive(isActive: boolean): void {
     if (isActive) {
       this.el.classList.add('track-card--playing');
@@ -197,10 +180,7 @@ export class TrackCard {
       this.el.classList.remove('track-card--playing');
     }
   }
-  
-  /**
-   * Получение данных трека
-   */
+
   getTrack(): Track {
     return this.track;
   }
