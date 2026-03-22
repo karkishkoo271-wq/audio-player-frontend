@@ -9,10 +9,14 @@
 ### Требования
 - Node.js v16+
 - npm v8+
-- PowerShell (Windows) или Terminal (Mac/Linux)
 
-### 1. Клонирование репозитория
+### 1. Установка зависимостей
+
 ```bash
-git clone <url-вашего-репозитория>
-cd audio-player-frontend
+# Фронтенд
+npm install
 
+# Бэкенд
+cd express-backend
+npm install
+cd ..
